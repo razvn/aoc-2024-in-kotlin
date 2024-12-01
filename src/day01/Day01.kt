@@ -1,7 +1,6 @@
 package day01
 
 import checkTest
-import org.jetbrains.annotations.TestOnly
 import readInput
 import readTest
 import runPart

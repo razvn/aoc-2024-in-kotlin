@@ -5,13 +5,14 @@ import kotlin.time.measureTimedValue
 
 fun Int.toDay() = "Day${this.toString().padStart(2, '0')}"
 
-fun readTest(dayNb: Int, suffix: String = "_test") = readInput(dayNb, suffix)
+fun readTest(dayNb: Int) = readInput(dayNb, "_test")
 
 /**
  * Reads lines from the given input txt file.
  */
-fun readInput(dayNb: Int, suffix: String = "_input") = File("src", "${dayNb.toDay().lowercase()}/${dayNb.toDay()}$suffix.txt")
-    .readLines()
+fun readInput(dayNb: Int, suffix: String = "_input") = dayNb.toDay().let {
+    File("src", "${it.lowercase()}/$it$suffix.txt")
+}.readLines()
 
 /**
  * Converts string to md5 hash.
