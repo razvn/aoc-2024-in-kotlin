@@ -1,19 +1,24 @@
 package day00
 
+import checkTest
 import readInput
 import readTest
+import runPart
 
 fun main() {
     val day = "Day00"
-    val testInput = readTest(day)
-    check(part1(testInput) == 0)
-    check(part2(testInput) == 0)
+    val test = true
 
-    val input = readInput(day)
-    // Part 1:
-    // Part 2:
-    println("Part 1: ${part1(input)}")
-    println("Part 2: ${part2(input)}")
+    if (test) {
+        //Test input
+        val testInput = readTest(day)
+        checkTest(1, ::part1, testInput, 1)
+        checkTest(2, ::part2, testInput, 1)
+    } else {
+        val input = readInput(day)
+        runPart(1, input, ::part1)  // Part 1:
+        runPart(2, input, ::part2)  // Part 2:
+    }
 }
 
 private fun decodeData(input: List<String>): List<String> {
