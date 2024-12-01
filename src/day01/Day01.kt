@@ -4,6 +4,19 @@ import readInput
 import readTest
 import kotlin.math.abs
 
+fun main() {
+    val day = "Day01"
+    val testInput = readTest(day)
+    check(part1(testInput) == 11)
+    check(part2(testInput) == 3)
+
+    val input = readInput(day)
+    // Part 1: 1722302
+    // Part 2: 20373490
+    println("Part 1: ${part1(input)}")
+    println("Part 2: ${part2(input)}")
+}
+
 private fun decodeData(input: List<String>): Pair<List<Int>, List<Int>> {
     val lists = input.map { it.split("   ") }
     val fistList = lists.map { it.first().toInt() }.sorted()
@@ -32,18 +45,3 @@ private fun part2(input: List<String>): Int {
     }
     return result.sum()
 }
-
-fun main() {
-    val day = "Day01"
-    // test if implementation meets criteria from the description, like:
-    val testInput = readTest(day)
-    check(part1(testInput) == 11)
-    check(part2(testInput) == 3)
-
-    val input = readInput(day)
-    // Part 1: 1722302
-    // Part 2: 20373490
-    println("Part 1: ${part1(input)}")
-    println("Part 2: ${part2(input)}")
-}
-
