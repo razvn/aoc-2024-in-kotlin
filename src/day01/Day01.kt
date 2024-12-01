@@ -1,25 +1,24 @@
 package day01
 
 import checkTest
+import org.jetbrains.annotations.TestOnly
 import readInput
 import readTest
 import runPart
 import kotlin.math.abs
 
 fun main() {
-    val day = "Day01"
-    val test = false
+    val day = 1
+    println("\n===== AOC 2024 : $day =====\n")
 
-    if (test) {
-        //Test input
-        val testInput = readTest(day)
-        checkTest(1, ::part1, testInput, 11)
-        checkTest(2, ::part2, testInput, 31)
-    } else {
-        val input = readInput(day)
-        runPart(1, input, ::part1)  // Part 1: 1722302
-        runPart(2, input, ::part2)  // Part 2: 20373490
-    }
+    //Test input
+    val testInput = readTest(day)
+    checkTest(::part1, testInput, 11)
+    checkTest(::part2, testInput, 31)
+
+    val input = readInput(day)
+    runPart(::part1, input)  // Part 1: 1722302
+    runPart(::part2, input)  // Part 2: 20373490
 }
 
 private fun decodeData(input: List<String>): Pair<List<Int>, List<Int>> {

@@ -3,13 +3,14 @@ import java.math.BigInteger
 import java.security.MessageDigest
 import kotlin.time.measureTimedValue
 
+fun Int.toDay() = "Day${this.toString().padStart(2, '0')}"
 
-fun readTest(day: String, suffix: String = "_test") = readInput(day, suffix)
+fun readTest(dayNb: Int, suffix: String = "_test") = readInput(dayNb, suffix)
 
 /**
  * Reads lines from the given input txt file.
  */
-fun readInput(day: String, suffix: String = "_input") = File("src", "${day.lowercase()}/$day$suffix.txt")
+fun readInput(dayNb: Int, suffix: String = "_input") = File("src", "${dayNb.toDay().lowercase()}/${dayNb.toDay()}$suffix.txt")
     .readLines()
 
 /**
@@ -20,12 +21,19 @@ fun String.md5() = BigInteger(1, MessageDigest.getInstance("MD5").digest(toByteA
     .padStart(32, '0')
 
 
-fun <A, B>checkTest(part: Int, block: (A) -> B, input: A, expected: B) {
+fun <A, B>checkTest(block: (A) -> B, input: A, expected: B) {
+    val part = block.toString().split(" ")[1].replace("""\D""".toRegex(), "")
     val actual = block(input)
-    check(actual == expected) { "Test $part failed - actual: `$actual` != expected `$expected`" }
+    if(actual != expected) {
+        println("Test $part: $actual ❌ - expected: $expected")
+        throw AssertionError("Test $part failed")
+    } else {
+        println("Test $part: $actual ✅")
+    }
 }
 
-fun <A, B>runPart(part: Int, data: A, block: (A) -> B): B {
+fun <A, B>runPart(block: (A) -> B, data: A): B {
+    val part =  block.toString().split(" ")[1].replace("""\D""".toRegex(), "")
     return measureTimedValue {
         block(data)
     }.let {

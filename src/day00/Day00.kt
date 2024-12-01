@@ -6,19 +6,17 @@ import readTest
 import runPart
 
 fun main() {
-    val day = "Day00"
-    val test = true
+    val day = 0
+    println("\n===== AOC 2024 : $day =====\n")
 
-    if (test) {
-        //Test input
-        val testInput = readTest(day)
-        checkTest(1, ::part1, testInput, 1)
-        checkTest(2, ::part2, testInput, 1)
-    } else {
-        val input = readInput(day)
-        runPart(1, input, ::part1)  // Part 1:
-        runPart(2, input, ::part2)  // Part 2:
-    }
+    //Test input
+    val testInput = readTest(day)
+    checkTest(::part1, testInput, 1)
+    checkTest(::part2, testInput, 1)
+
+    val input = readInput(day)
+    runPart(::part1, input)  // Part 1:
+    runPart(::part2, input)  // Part 2:
 }
 
 private fun decodeData(input: List<String>): List<String> {
