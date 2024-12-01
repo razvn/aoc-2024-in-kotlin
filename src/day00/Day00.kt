@@ -1,36 +1,39 @@
 package day00
 
+import Day
 import checkTest
 import readInput
 import readTest
 import runPart
 
 fun main() {
-    val day = 0
-    println("\n===== AOC 2024 : $day =====\n")
+    val day = Day00
+    println("\n===== AOC 2024 : ${day.nb} =====\n")
 
     //Test input
-    val testInput = readTest(day)
-    checkTest(::part1, testInput, 1)
-    checkTest(::part2, testInput, 1)
+    val testInput = readTest(day.nb)
+    checkTest(day::part1, testInput, 0)
+    checkTest(day::part2, testInput, 0)
 
-    val input = readInput(day)
-    runPart(::part1, input)  // Part 1:
-    runPart(::part2, input)  // Part 2:
+    val input = readInput(day.nb)
+    runPart(day::part1, input)  // Part 1:
+    runPart(day::part2, input)  // Part 2:
 }
 
-private fun decodeData(input: List<String>): List<String> {
-    return input
-}
 
-private fun part1(input: List<String>): Int {
-    val data = decodeData(input)
+object Day00 : Day<Int, Int, List<String>> {
+    override fun decodeData(input: List<String>): List<String> {
 
-    return data.size
-}
+        return input
+    }
 
-private fun part2(input: List<String>): Int {
-    val data = decodeData(input)
+    override fun part1(input: List<String>): Int {
 
-    return data.size
+        return 0
+    }
+
+    override fun part2(input: List<String>): Int {
+
+        return 0
+    }
 }
