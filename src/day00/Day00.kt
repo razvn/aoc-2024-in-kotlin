@@ -5,10 +5,11 @@ import checkTest
 import readInput
 import readTest
 import runPart
+import java.time.LocalDateTime
 
 fun main() {
     val day = Day00
-    println("\n===== AOC 2024 : ${day.nb} =====\n")
+    println("\n===== AOC 2024 : ${day.nb} : ${LocalDateTime.now()} =====\n")
 
     //Test input
     val testInput = readTest(day.nb)
