@@ -3,10 +3,11 @@ package day02
 import Day
 import readInput
 import runPart
+import java.time.LocalDateTime
 
 fun main() {
     val day = Day02
-    println("\n===== AOC 2024 : ${day.nb} =====\n")
+    println("\n===== AOC 2024 : ${day.nb} : ${LocalDateTime.now()} =====\n")
 
     val input = readInput(day.nb)
     runPart(day::part1, input)  // Part 1: 559
@@ -26,55 +27,41 @@ object Day02 : Day<Int, Int, List<List<Int>>> {
     }
 
     private fun isDecrease(list: List<Int>): Boolean {
-        for (i in 0..<list.size - 1) {
-            if (list[i] - (list[i + 1]) in 1..3) {
-                continue
-            } else {
-                return false
-            }
-        }
-        return true
+        return list.zipWithNext().all { (a, b) -> a - b in 1..3 }
     }
 
-
     private fun isIncrease(list: List<Int>): Boolean {
-        for (i in 0..<list.size - 1) {
-            if ((list[i + 1] - list[i]) in 1..3) {
-                continue
-            } else {
-                return false
-            }
-        }
-        return true
+        return list.zipWithNext().all { (a, b) -> b - a in 1..3 }
     }
 
     override fun part2(input: List<String>): Int {
         val data = decodeData(input)
-        val inc = data.count { isDecreaseTolerate(it) }
-        val dec = data.count { isIncreaseTolerate(it) }
+        val inc = data.count { isIncreaseTolerate(it) }
+        val dec = data.count { isDecreaseTolerate(it) }
         return inc + dec
     }
 
     private fun isDecreaseTolerate(list: List<Int>): Boolean {
         for (i in 0..<list.size - 1) {
-            if (list[i] - (list[i + 1]) in 1..3) {
+            val diff = list[i] - list[i + 1]
+            if (diff in 1..3) {
                 continue
             } else {
-                return isDecrease(list.subList(0, i) + list.subList(i + 1, list.size))
-                        || isDecrease(list.subList(0, i + 1) + list.subList(i + 2, list.size))
+                return isDecrease(list.toMutableList().apply { removeAt(i) })
+                        || isDecrease(list.toMutableList().apply { removeAt(i + 1) })
             }
         }
         return true
     }
 
-
     private fun isIncreaseTolerate(list: List<Int>): Boolean {
         for (i in 0..< list.size - 1) {
-            if ((list[i + 1] - list[i]) in 1..3) {
+            val diff = list[i + 1] - list[i]
+            if (diff in 1..3) {
                 continue
             } else {
-                return isIncrease(list.subList(0, i) + list.subList(i + 1, list.size)) ||
-                        isIncrease(list.subList(0, i+1) + list.subList(i + 2, list.size))
+                return isIncrease(list.toMutableList().apply { removeAt(i) })
+                        || isIncrease(list.toMutableList().apply { removeAt(i + 1) })
             }
         }
         return true

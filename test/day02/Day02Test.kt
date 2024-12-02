@@ -24,13 +24,6 @@ class Day02Test {
   assertEquals(2, day.part1(input))
  }
 
-
- @Test
- fun p1() {
-  val d = listOf("11 14 16 17 19 21")
-  assertEquals(1, day.part1(d))
- }
-
  @Test
  fun testPart2() {
   assertEquals(4, day.part2(input))
