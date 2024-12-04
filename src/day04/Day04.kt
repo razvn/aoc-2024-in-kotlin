@@ -14,7 +14,6 @@ fun main() {
     runPart(day::part2, input)  // Part 2: 1967
 }
 
-
 object Day04 : Day<Int, Int, List<String>> {
     override fun decodeData(input: List<String>): List<String> {
 
@@ -22,92 +21,58 @@ object Day04 : Day<Int, Int, List<String>> {
     }
 
     override fun part1(input: List<String>): Int {
-        return input.mapIndexed {i, data -> xmas(i, data, input) }.sum()
-    }
-
-    private fun xmas(lineIndex: Int, line: String, input: List<String>): Int {
-        return line.mapIndexed { colIndex, c ->
-            when(c) {
-                'X' -> checkX(lineIndex, colIndex, line, input)
-                else -> 0
-            }
-        }.sum()
-    }
-
-    fun xmasEst(colIndex: Int, line: String): Boolean {
-        return line.substring(colIndex).startsWith("XMAS")
-    }
-
-    fun xmasWest(colIndex: Int, line: String): Boolean {
-        return line.substring(0, colIndex+1).endsWith("SAMX")
-    }
-
-    fun xmasNord(lineIndex: Int, colIndex: Int, input: List<String>): Boolean {
-        if (lineIndex < 3) return false
-        val text = "${input[lineIndex][colIndex]}${input[lineIndex-1][colIndex]}${input[lineIndex-2][colIndex]}${input[lineIndex-3][colIndex]}"
-        return text == "XMAS"
-    }
-
-
-    fun xmasSouth(lineIndex: Int, colIndex: Int, input: List<String>): Boolean {
-        if (lineIndex > input.size - 4) return false
-        val text = "${input[lineIndex][colIndex]}${input[lineIndex+1][colIndex]}${input[lineIndex+2][colIndex]}${input[lineIndex+3][colIndex]}"
-        return text == "XMAS"
-    }
-
-    fun xmasNE(lineIndex: Int, colIndex: Int, line: String, input: List<String>): Boolean {
-        if (lineIndex < 3 || colIndex > line.length - 4) return false
-        val text = "${input[lineIndex][colIndex]}${input[lineIndex-1][colIndex+1]}${input[lineIndex-2][colIndex+2]}${input[lineIndex-3][colIndex+3]}"
-        return text == "XMAS"
-    }
-
-    fun xmasNW(lineIndex: Int, colIndex: Int, input: List<String>): Boolean {
-        if (lineIndex < 3 || colIndex < 3) return false
-        val text = "${input[lineIndex][colIndex]}${input[lineIndex-1][colIndex-1]}${input[lineIndex-2][colIndex-2]}${input[lineIndex-3][colIndex-3]}"
-        return text == "XMAS"
-    }
-
-    fun xmasSE(lineIndex: Int, colIndex: Int, line: String, input: List<String>): Boolean {
-        if (lineIndex > input.size - 4 || colIndex > line.length - 4) return false
-        val text = "${input[lineIndex][colIndex]}${input[lineIndex+1][colIndex+1]}${input[lineIndex+2][colIndex+2]}${input[lineIndex+3][colIndex+3]}"
-        return text == "XMAS"
-    }
-
-    fun xmasSW(lineIndex: Int, colIndex: Int, input: List<String>): Boolean {
-        if (lineIndex > input.size - 4 || colIndex < 3) return false
-        val text = "${input[lineIndex][colIndex]}${input[lineIndex+1][colIndex-1]}${input[lineIndex+2][colIndex-2]}${input[lineIndex+3][colIndex-3]}"
-        return text == "XMAS"
-    }
-
-    fun checkX(lineIndex: Int, colIndex: Int, line: String, input: List<String>): Int {
-        val est = xmasEst(colIndex, line)
-        val west = xmasWest(colIndex, line)
-        val nord = xmasNord(lineIndex, colIndex, input)
-        val south = xmasSouth(lineIndex, colIndex, input)
-        val ne = xmasNE(lineIndex, colIndex, line, input)
-        val nw = xmasNW(lineIndex, colIndex, input)
-        val se = xmasSE(lineIndex, colIndex, line, input)
-        val sw = xmasSW(lineIndex, colIndex, input)
-
-        return listOf(est, west, nord, south, ne, nw, se, sw).count { it }
-    }
-
-    fun checkA(lineIndex: Int, colIndex: Int, input: List<String>): Int {
-        val nw = input[lineIndex - 1][colIndex -1]
-        val ne = input[lineIndex - 1][colIndex + 1]
-        val sw = input[lineIndex + 1][colIndex - 1]
-        val se = input[lineIndex + 1][colIndex + 1]
-        return if (((nw == 'M' && se == 'S') || (nw == 'S' && se == 'M')) &&
-            ((ne == 'M' && sw == 'S') || (ne == 'S' && sw == 'M'))) 1 else 0
+        return input.mapIndexed { i, data -> xmas(i, data, input) }.sum()
     }
 
     override fun part2(input: List<String>): Int {
-        return (1..input.size - 2).sumOf { lineIdx ->
-            (1..input[lineIdx].length - 2).sumOf { colIdx ->
-                val char = input[lineIdx][colIdx]
-                if (char == 'A') checkA(lineIdx, colIdx, input)
-                else 0
-            }
-        }
+        // we need to drop the first and last line / char as A cannot be on the border
+        return input.drop(1).dropLast(1).mapIndexed { lineIdx, line ->
+            line.substring(1, line.lastIndex).mapIndexed { colIdx, char ->
+                if (char == 'A') checkPart2(lineIdx + 1, colIdx + 1, input) else 0
+            }.sum()
+        }.sum()
+    }
+
+    private fun xmas(lineIndex: Int, line: String, input: List<String>): Int {
+        return line.mapIndexedNotNull { colIndex, char ->
+            if (char == 'X') checkOperation(lineIndex, colIndex, input) else null
+        }.sum()
+    }
+
+    private fun checkOperation(line: Int, col: Int, input: List<String>): Int {
+        return Operation.entries.map {
+            applyOperation(line, col, it, input, 3)
+        }.count { it == "MAS" } //already checked that the first letter is X
+    }
+
+    enum class Operation(val lineInc: Int, val colInc: Int) {
+        E(0, 1),
+        W(0, -1),
+        N(-1, 0),
+        S(1, 0),
+        NE(-1, 1),
+        NW(-1, -1),
+        SE(1, 1),
+        SW(1, -1);
+    }
+
+    private fun List<String>.charAtLineCol(lineIndex: Int, colIndex: Int): Char {
+        return this[lineIndex][colIndex]
+    }
+
+    private fun applyOperation(line: Int, col: Int, op: Operation, input: List<String>, len: Int = 3): String {
+        return (1..len).mapNotNull {
+            val newLine = line + op.lineInc * it
+            val newCol = col + op.colInc * it
+            input.getOrNull(newLine)?.getOrNull(newCol)
+        }.joinToString("")
+    }
+
+    private fun checkPart2(lineIndex: Int, colIndex: Int, input: List<String>): Int {
+        val positions = listOf(
+            input.charAtLineCol(lineIndex - 1, colIndex - 1) to input.charAtLineCol(lineIndex + 1, colIndex + 1),
+            input.charAtLineCol(lineIndex - 1, colIndex + 1) to input.charAtLineCol(lineIndex + 1, colIndex - 1)
+        )
+        return if (positions.all { (a, b) -> (a == 'M' && b == 'S') || (a == 'S' && b == 'M') }) 1 else 0
     }
 }
