@@ -27,40 +27,46 @@ object Day07 : Day<Long, Long, Map<Long, List<Long>>> {
     }
 
     override fun part1(input: List<String>): Long {
-        val data  = decodeData(input)
-        val validLines = data.filter { (key, values) ->
-            val res = calc(values.drop(1), key, listOf(ADD, MULT), listOf(Pair(values.first(), values.first().toString())))
-            res != null
-        }
-        return validLines.keys.sum()
+        val data = decodeData(input)
+        val validLines = data.entries.mapNotNull { (key, values) ->
+            calc(values, key, listOf(ADD, MULT), emptyList())
+        }.toMap()
+        // validLines.forEach { println("${it.key} = ${it.value}") }
+        return validLines.keys.sumOf { it }
     }
 
-    tailrec fun calc(nbs: List<Long>, result: Long, operations: List<Operation>, acc: List<Pair<Long, String>>): Pair<Long, String>? {
-        if (acc.isEmpty() || nbs.isEmpty())
-            return acc.firstOrNull { it.first == result }
-
-        val a = nbs.first()
-        val rest = nbs.drop(1)
-        val newAcc = acc.flatMap { accValue ->
-            operations.map { op ->
-                Pair(op.func(accValue.first, a), "${accValue.second}${op.op}$a")
-            }
-        }.filter { it.first <= result }
-        return calc(rest, result, operations, newAcc)
+    tailrec fun calc(
+        nbs: List<Long>,
+        result: Long,
+        operations: List<Operation>,
+        acc: List<Pair<Long, String>>
+    ): Pair<Long, String>? {
+        return if (nbs.isEmpty()) acc.firstOrNull { it.first == result }
+        else {
+            val a = nbs.first()
+            val rest = nbs.drop(1)
+            val newAcc = if (acc.isEmpty()) listOf(a to "")
+            else acc.flatMap { accValue ->
+                operations.map { op ->
+                    op.func(accValue.first, a) to "${accValue.second}${op.op}$a"
+                }
+            }.filter { it.first <= result }
+            return calc(rest, result, operations, newAcc)
+        }
     }
 
     override fun part2(input: List<String>): Long {
-        val data  = decodeData(input)
-        val validLines = data.filter { (key, values) ->
-            val res = calc(values.drop(1), key, listOf(ADD, MULT, OR), listOf(Pair(values.first(), values.first().toString())))
-            res != null
-        }
-        return validLines.keys.sum()
+        val data = decodeData(input)
+        val validLines = data.entries.mapNotNull { (key, values) ->
+            calc(values, key, listOf(ADD, MULT, OR), emptyList())
+        }.toMap()
+        // validLines.forEach { println("${it.key} = ${it.value}") }
+        return validLines.keys.sumOf { it }
     }
 
     enum class Operation(val op: String, val func: (Long, Long) -> Long) {
-        ADD(" + ", {a:Long, b: Long -> a + b}),
-        MULT(" * ", {a:Long, b: Long -> a * b}),
-        OR(" || ", { a:Long, b: Long -> "$a$b".toLong()})
+        ADD(" + ", { a, b -> a + b }),
+        MULT(" * ", { a, b -> a * b }),
+        OR(" || ", { a, b -> "$a$b".toLong() })
     }
 }
