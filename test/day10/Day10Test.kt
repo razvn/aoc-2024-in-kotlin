@@ -12,7 +12,7 @@ class Day10Test {
     @Test
     fun testDecodeData() {
         val decode = day.decodeData(input)
-        assertEquals(10, decode.size)
+        assertEquals(64, decode.size)
     }
 
     @Test
