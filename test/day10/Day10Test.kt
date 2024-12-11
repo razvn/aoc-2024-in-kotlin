@@ -1,6 +1,5 @@
 package day10
 
-import day10.Day10.Point
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import readTest
